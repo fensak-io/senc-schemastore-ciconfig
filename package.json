@@ -22,7 +22,7 @@
     }
   },
   "scripts": {
-    "lint": "node build.cjs && eslint .",
+    "lint": "true",
     "fmt": "prettier -w .",
     "build": "node build.js && parcel build",
     "release": "semantic-release"

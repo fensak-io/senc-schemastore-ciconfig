@@ -8,1512 +8,760 @@
 import { FromSchema } from "json-schema-to-ts";
 
 const schema = {
+  $comment:
+    "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions",
+  $id: "https://json.schemastore.org/github-action.json",
   $schema: "http://json-schema.org/draft-07/schema#",
-  $id: "https://json.schemastore.org/circleciconfig.json",
+  additionalProperties: false,
   definitions: {
-    logical: {
-      description:
-        "https://circleci.com/docs/configuration-reference#logic-statements \n\nA logical statement to be used in dynamic configuration",
-      oneOf: [
-        {
-          type: ["string", "boolean", "integer", "number"],
-        },
-        {
-          type: "object",
-          additionalProperties: false,
-          minProperties: 1,
-          maxProperties: 1,
-          properties: {
-            and: {
-              description:
-                "https://circleci.com/docs/configuration-reference#logic-statements \n\nLogical and: true when all statements in the list are true",
-              type: "array",
-              items: {
-                $ref: "#/definitions/logical",
-              },
-            },
-            or: {
-              description:
-                "https://circleci.com/docs/configuration-reference#logic-statements \n\nLogical or: true when at least one statements in the list is true",
-              type: "array",
-              items: {
-                $ref: "#/definitions/logical",
-              },
-            },
-            not: {
-              description:
-                "https://circleci.com/docs/configuration-reference#logic-statements \n\nLogical not: true when statement is false",
-              $ref: "#/definitions/logical",
-            },
-            equal: {
-              description:
-                "https://circleci.com/docs/configuration-reference#logic-statements \n\nTrue when all elements in the list are equal",
-              type: "array",
-            },
-            matches: {
-              description:
-                "https://circleci.com/docs/configuration-reference#logic-statements \n\nTrue when value matches the pattern",
-              type: "object",
-              additionalProperties: false,
-              properties: {
-                pattern: {
-                  type: "string",
-                },
-                value: {
-                  type: "string",
-                },
-              },
-            },
-          },
-        },
-      ],
+    expressionSyntax: {
+      type: "string",
+      $comment:
+        "escape `{` and `}` in pattern to be unicode compatible (#1360)",
+      pattern: "^\\$\\{\\{(.|[\r\n])*\\}\\}$",
     },
-    filter: {
-      description: "A map defining rules for execution on specific branches",
+    stringContainingExpressionSyntax: {
+      type: "string",
+      $comment:
+        "escape `{` and `}` in pattern to be unicode compatible (#1360)",
+      pattern: "^.*\\$\\{\\{(.|[\r\n])*\\}\\}.*$",
+    },
+    "pre-if": {
+      $comment:
+        "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#pre-if",
+      description:
+        "Allows you to define conditions for the `pre:` action execution. The `pre:` action will only run if the conditions in `pre-if` are met. If not set, then `pre-if` defaults to `always()`. Note that the `step` context is unavailable, as no steps have run yet.",
+      type: "string",
+    },
+    "post-if": {
+      $comment:
+        "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#post-if",
+      description:
+        "Allows you to define conditions for the `post:` action execution. The `post:` action will only run if the conditions in `post-if` are met. If not set, then `post-if` defaults to `always()`.",
+      type: "string",
+    },
+    "runs-javascript": {
+      $comment:
+        "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions",
+      description:
+        "Configures the path to the action's code and the application used to execute the code.",
       type: "object",
+      properties: {
+        using: {
+          $comment:
+            "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsusing",
+          description:
+            "The application used to execute the code specified in `main`.",
+          enum: ["node12", "node16", "node20"],
+        },
+        main: {
+          $comment:
+            "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsmain",
+          description:
+            "The file that contains your action code. The application specified in `using` executes this file.",
+          type: "string",
+        },
+        pre: {
+          $comment:
+            "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#pre",
+          description:
+            "Allows you to run a script at the start of a job, before the `main:` action begins. For example, you can use `pre:` to run a prerequisite setup script. The application specified with the `using` syntax will execute this file. The `pre:` action always runs by default but you can override this using `pre-if`.",
+          type: "string",
+        },
+        "pre-if": {
+          $ref: "#/definitions/pre-if",
+        },
+        post: {
+          $comment:
+            "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#post",
+          description:
+            "Allows you to run a script at the end of a job, once the `main:` action has completed. For example, you can use `post:` to terminate certain processes or remove unneeded files. The application specified with the `using` syntax will execute this file. The `post:` action always runs by default but you can override this using `post-if`.",
+          type: "string",
+        },
+        "post-if": {
+          $ref: "#/definitions/post-if",
+        },
+      },
+      required: ["using", "main"],
       additionalProperties: false,
-      properties: {
-        only: {
-          description:
-            "Either a single branch specifier, or a list of branch specifiers",
-          oneOf: [
-            {
-              type: "string",
-            },
-            {
-              type: "array",
-              items: {
-                type: "string",
-              },
-            },
-          ],
-        },
-        ignore: {
-          description:
-            "Either a single branch specifier, or a list of branch specifiers",
-          oneOf: [
-            {
-              type: "string",
-            },
-            {
-              type: "array",
-              items: {
-                type: "string",
-              },
-            },
-          ],
-        },
-      },
     },
-    orbs: {
+    "runs-composite": {
+      $comment:
+        "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-composite-run-steps-actions",
       description:
-        "https://circleci.com/docs/configuration-reference#orbs-requires-version-21\n\nOrbs are reusable packages of CircleCI configuration that you may share across projects, enabling you to create encapsulated, parameterized commands, jobs, and executors that can be used across multiple projects.",
+        "Configures the path to the composite action, and the application used to execute the code.",
       type: "object",
-      additionalProperties: {
-        oneOf: [
-          {
-            description:
-              "https://circleci.com/docs/creating-orbs#semantic-versioning-in-orbs\n\nAn orb to depend on and its semver range, or volatile for the most recent release.",
-            type: "string",
-            pattern:
-              "^[a-z][a-z0-9_-]+/[a-z][a-z0-9_-]+@(dev:[\\.a-z0-9_-]+|\\d+|\\d+\\.\\d+|\\d+\\.\\d+\\.\\d+|volatile)$",
-          },
-          {
-            description:
-              "https://circleci.com/docs/creating-orbs#creating-inline-orbs\n\nInline orbs can be handy during development of an orb or as a convenience for name-spacing jobs and commands in lengthy configurations, particularly if you later intend to share the orb with others.",
-            type: "object",
-            properties: {
-              orbs: {
-                $ref: "#/definitions/orbs",
-              },
-              commands: {
-                $ref: "#/definitions/commands",
-              },
-              executors: {
-                $ref: "#/definitions/executors",
-              },
-              jobs: {
-                $ref: "#/definitions/jobs",
-              },
-            },
-          },
-        ],
-      },
-    },
-    commands: {
-      description:
-        "https://circleci.com/docs/configuration-reference#commands-requires-version-21\n\nA command definition defines a sequence of steps as a map to be executed in a job, enabling you to reuse a single command definition across multiple jobs.",
-      type: "object",
-      additionalProperties: {
-        description:
-          "https://circleci.com/docs/configuration-reference#commands-requires-version-21\n\nDefinition of a custom command.",
-        type: "object",
-        required: ["steps"],
-        properties: {
-          steps: {
-            description:
-              "A sequence of steps run inside the calling job of the command.",
-            type: "array",
-            items: {
-              $ref: "#/definitions/step",
-            },
-          },
-          parameters: {
-            description:
-              "https://circleci.com/docs/reusing-config#using-the-parameters-declaration\n\nA map of parameter keys.",
-            type: "object",
-            patternProperties: {
-              "^[a-z][a-z0-9_-]+$": {
-                oneOf: [
-                  {
-                    description:
-                      "https://circleci.com/docs/reusing-config#string\n\nA string parameter.",
-                    type: "object",
-                    required: ["type"],
-                    properties: {
-                      type: {
-                        enum: ["string"],
-                      },
-                      description: {
-                        type: "string",
-                      },
-                      default: {
-                        type: "string",
-                      },
-                    },
-                  },
-                  {
-                    description:
-                      "https://circleci.com/docs/reusing-config#boolean\n\nA boolean parameter.",
-                    type: "object",
-                    required: ["type"],
-                    properties: {
-                      type: {
-                        enum: ["boolean"],
-                      },
-                      description: {
-                        type: "string",
-                      },
-                      default: {
-                        type: "boolean",
-                      },
-                    },
-                  },
-                  {
-                    description:
-                      "https://circleci.com/docs/reusing-config#integer\n\nAn integer parameter.",
-                    type: "object",
-                    required: ["type"],
-                    properties: {
-                      type: {
-                        enum: ["integer"],
-                      },
-                      description: {
-                        type: "string",
-                      },
-                      default: {
-                        type: "integer",
-                      },
-                    },
-                  },
-                  {
-                    description:
-                      "https://circleci.com/docs/reusing-config#enum\n\nThe `enum` parameter may be a list of any values. Use the `enum` parameter type when you want to enforce that the value must be one from a specific set of string values.",
-                    type: "object",
-                    required: ["type", "enum"],
-                    properties: {
-                      type: {
-                        enum: ["enum"],
-                      },
-                      enum: {
-                        type: "array",
-                        minItems: 1,
-                        items: {
-                          type: "string",
-                        },
-                      },
-                      description: {
-                        type: "string",
-                      },
-                      default: {
-                        type: "string",
-                      },
-                    },
-                  },
-                  {
-                    description:
-                      "https://circleci.com/docs/reusing-config#executor\n\nUse an `executor` parameter type to allow the invoker of a job to decide what executor it will run on.",
-                    type: "object",
-                    required: ["type"],
-                    properties: {
-                      type: {
-                        enum: ["executor"],
-                      },
-                      description: {
-                        type: "string",
-                      },
-                      default: {
-                        type: "string",
-                      },
-                    },
-                  },
-                  {
-                    description:
-                      "https://circleci.com/docs/reusing-config#steps\n\nSteps are used when you have a job or command that needs to mix predefined and user-defined steps. When passed in to a command or job invocation, the steps passed as parameters are always defined as a sequence, even if only one step is provided.",
-                    type: "object",
-                    required: ["type"],
-                    properties: {
-                      type: {
-                        enum: ["steps"],
-                      },
-                      description: {
-                        type: "string",
-                      },
-                      default: {
-                        type: "array",
-                        items: {
-                          $ref: "#/definitions/step",
-                        },
-                      },
-                    },
-                  },
-                  {
-                    description:
-                      "https://circleci.com/docs/reusing-config#environment-variable-name\n\nThe environment variable name parameter is a string that must match a POSIX_NAME regexp (e.g. no spaces or special characters) and is a more meaningful parameter type that enables additional checks to be performed. ",
-                    type: "object",
-                    required: ["type"],
-                    properties: {
-                      type: {
-                        enum: ["env_var_name"],
-                      },
-                      description: {
-                        type: "string",
-                      },
-                      default: {
-                        type: "string",
-                        pattern: "^[a-zA-Z][a-zA-Z0-9_-]+$",
-                      },
-                    },
-                  },
-                ],
-              },
-            },
-          },
-          description: {
-            description: "A string that describes the purpose of the command.",
-            type: "string",
-          },
-        },
-      },
-    },
-    dockerLayerCaching: {
-      description:
-        "Set to `true` to enable [Docker Layer Caching](https://circleci.com/docs/docker-layer-caching). Note: If you haven't already, you must open a support ticket to have a CircleCI Sales representative contact you about enabling this feature on your account for an additional fee.",
-      type: "boolean",
-      default: "true",
-    },
-    dockerExecutor: {
-      description:
-        "Options for the [docker executor](https://circleci.com/docs/configuration-reference#docker)",
-      required: ["docker"],
       properties: {
-        docker: {
+        using: {
+          $comment:
+            "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsusing-1",
+          description:
+            "To use a composite run steps action, set this to 'composite'.",
+          const: "composite",
+        },
+        steps: {
+          $comment:
+            "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runssteps",
+          description: "The run steps that you plan to run in this action.",
           type: "array",
           items: {
             type: "object",
-            additionalProperties: false,
-            required: ["image"],
             properties: {
-              image: {
-                description: "The name of a custom docker image to use",
+              run: {
+                $comment:
+                  "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsstepsrun",
+                description:
+                  "The command you want to run. This can be inline or a script in your action repository.",
                 type: "string",
+              },
+              shell: {
+                $comment:
+                  "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsstepsshell",
+                description: "The shell where you want to run the command.",
+                type: "string",
+                anyOf: [
+                  {
+                    $comment:
+                      "https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#custom-shell",
+                  },
+                  {
+                    enum: ["bash", "pwsh", "python", "sh", "cmd", "powershell"],
+                  },
+                ],
+              },
+              uses: {
+                $comment:
+                  "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsstepsuses",
+                description:
+                  "Selects an action to run as part of a step in your job.",
+                type: "string",
+              },
+              with: {
+                $comment:
+                  "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsstepswith",
+                description:
+                  "A map of the input parameters defined by the action. Each input parameter is a key/value pair. Input parameters are set as environment variables. The variable is prefixed with INPUT_ and converted to upper case.",
+                type: "object",
               },
               name: {
-                description:
-                  "The name the container is reachable by. By default, container services are accessible through `localhost`",
+                $comment:
+                  "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsstepsname",
+                description: "The name of the composite run step.",
                 type: "string",
               },
-              entrypoint: {
+              id: {
+                $comment:
+                  "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsstepsid",
                 description:
-                  "The command used as executable when launching the container",
-                oneOf: [
-                  {
-                    type: "string",
-                  },
-                  {
-                    type: "array",
-                    items: {
-                      type: "string",
-                    },
-                  },
-                ],
-              },
-              command: {
-                description:
-                  "The command used as pid 1 (or args for entrypoint) when launching the container",
-                oneOf: [
-                  {
-                    type: "string",
-                  },
-                  {
-                    type: "array",
-                    items: {
-                      type: "string",
-                    },
-                  },
-                ],
-              },
-              user: {
-                description: "Which user to run the command as",
+                  "A unique identifier for the step. You can use the `id` to reference the step in contexts.",
                 type: "string",
               },
-              environment: {
-                description: "A map of environment variable names and values",
+              if: {
+                $comment:
+                  "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsstepsif",
+                description:
+                  "You can use the if conditional to prevent a step from running unless a condition is met. You can use any supported context and expression to create a conditional.\nExpressions in an if conditional do not require the ${{ }} syntax. For more information, see https://help.github.com/en/articles/contexts-and-expression-syntax-for-github-actions.",
+                type: "string",
+              },
+              env: {
+                $comment:
+                  "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsstepsenv",
+                description:
+                  "Sets a map of environment variables for only that step.",
                 type: "object",
                 additionalProperties: {
-                  type: ["string", "number", "boolean"],
+                  type: "string",
                 },
               },
-              auth: {
+              "continue-on-error": {
+                $comment:
+                  "https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#jobsjob_idstepscontinue-on-error",
                 description:
-                  "Authentication for registries using standard `docker login` credentials",
-                type: "object",
-                additionalProperties: false,
-                properties: {
-                  username: {
-                    type: "string",
+                  "Prevents a job from failing when a step fails. Set to true to allow a job to pass when this step fails.",
+                oneOf: [
+                  {
+                    type: "boolean",
                   },
-                  password: {
-                    type: "string",
+                  {
+                    $ref: "#/definitions/expressionSyntax",
                   },
-                },
+                ],
+                default: false,
               },
-              aws_auth: {
+              "working-directory": {
+                $comment:
+                  "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsstepsworking-directory",
                 description:
-                  "Authentication for AWS EC2 Container Registry (ECR). You can use the access/secret keys or OIDC.",
-                type: "object",
-                additionalProperties: false,
-                properties: {
-                  aws_access_key_id: {
-                    type: "string",
-                  },
-                  aws_secret_access_key: {
-                    type: "string",
-                  },
-                  oidc_role_arn: {
-                    type: "string",
-                  },
-                },
-              },
-            },
-          },
-        },
-        resource_class: {
-          description:
-            "Amount of CPU and RAM allocated for each job. Note: A performance plan is required to access this feature.",
-          type: "string",
-          enum: [
-            "small",
-            "medium",
-            "medium+",
-            "large",
-            "xlarge",
-            "2xlarge",
-            "2xlarge+",
-            "arm.medium",
-            "arm.large",
-            "arm.xlarge",
-            "arm.2xlarge",
-          ],
-        },
-      },
-    },
-    machineExecutor: {
-      description:
-        "Options for the [machine executor](https://circleci.com/docs/configuration-reference#machine)",
-      type: "object",
-      required: ["machine"],
-      oneOf: [
-        {
-          properties: {
-            machine: {
-              oneOf: [
-                { const: true },
-                {
-                  type: "object",
-                  additionalProperties: false,
-                  required: ["image"],
-                  properties: {
-                    image: {
-                      description:
-                        "The VM image to use. View [available images](https://circleci.com/docs/configuration-reference/#available-linux-machine-images-cloud). **Note:** This key is **not** supported on the installable CircleCI. For information about customizing machine executor images on CircleCI installed on your servers, see our [VM Service documentation](https://circleci.com/docs/vm-service).",
-                      type: "string",
-                      enum: [
-                        "ubuntu-2004:2023.10.1",
-                        "ubuntu-2004:2023.07.1",
-                        "ubuntu-2004:2023.04.2",
-                        "ubuntu-2004:2023.04.1",
-                        "ubuntu-2004:2023.02.1",
-                        "ubuntu-2004:2022.10.1",
-                        "ubuntu-2004:2022.07.1",
-                        "ubuntu-2004:2022.04.2",
-                        "ubuntu-2004:2022.04.1",
-                        "ubuntu-2004:202201-02",
-                        "ubuntu-2004:202201-01",
-                        "ubuntu-2004:202111-02",
-                        "ubuntu-2004:202111-01",
-                        "ubuntu-2004:202107-02",
-                        "ubuntu-2004:202104-01",
-                        "ubuntu-2004:202101-01",
-                        "ubuntu-2004:202010-01",
-                        "ubuntu-2004:current",
-                        "ubuntu-2004:edge",
-                        "ubuntu-2204:2023.10.1",
-                        "ubuntu-2204:2023.07.2",
-                        "ubuntu-2204:2023.04.2",
-                        "ubuntu-2204:2023.04.1",
-                        "ubuntu-2204:2023.02.1",
-                        "ubuntu-2204:2022.10.2",
-                        "ubuntu-2204:2022.10.1",
-                        "ubuntu-2204:2022.07.2",
-                        "ubuntu-2204:2022.07.1",
-                        "ubuntu-2204:2022.04.2",
-                        "ubuntu-2204:2022.04.1",
-                        "ubuntu-2204:current",
-                        "ubuntu-2204:edge",
-                        "android:2023.10.1",
-                        "android:2023.09.1",
-                        "android:2023.08.1",
-                        "android:2023.07.1",
-                        "android:2023.06.1",
-                        "android:2023.05.1",
-                        "android:2023.04.1",
-                        "android:2023.03.1",
-                        "android:2023.02.1",
-                        "android:2022.12.1",
-                        "android:2022.09.1",
-                        "android:2022.08.1",
-                        "android:2022.07.1",
-                        "android:2022.06.2",
-                        "android:2022.06.1",
-                        "android:2022.04.1",
-                        "android:2022.03.1",
-                        "android:2022.01.1",
-                        "android:2021.12.1",
-                        "android:2021.10.1",
-                        "android:202102-01",
-                      ],
-                    },
-                    docker_layer_caching: {
-                      $ref: "#/definitions/dockerLayerCaching",
-                    },
-                  },
-                },
-              ],
-            },
-            resource_class: {
-              description:
-                "Amount of CPU and RAM allocated for each job. View [available resource classes](https://circleci.com/docs/configuration-reference/#linuxvm-execution-environment)",
-              type: "string",
-              enum: [
-                "medium",
-                "large",
-                "xlarge",
-                "2xlarge",
-                "2xlarge+",
-                "arm.medium",
-                "arm.large",
-                "arm.xlarge",
-                "arm.2xlarge",
-              ],
-            },
-          },
-        },
-        {
-          properties: {
-            machine: {
-              type: "object",
-              additionalProperties: false,
-              required: ["image"],
-              properties: {
-                image: {
-                  description:
-                    "The VM image to use. View [available images](https://circleci.com/docs/configuration-reference/#available-linux-gpu-images). **Note:** This key is **not** supported on the installable CircleCI. For information about customizing machine executor images on CircleCI installed on your servers, see our [VM Service documentation](https://circleci.com/docs/vm-service).",
-                  type: "string",
-                  enum: ["linux-cuda-11:default", "linux-cuda-12:default"],
-                },
-                docker_layer_caching: {
-                  $ref: "#/definitions/dockerLayerCaching",
-                },
-              },
-            },
-            resource_class: {
-              description:
-                "Amount of CPU and RAM allocated for each job. View [available resource classes](https://circleci.com/docs/configuration-reference/#gpu-execution-environment-linux)",
-              type: "string",
-              enum: ["gpu.nvidia.medium", "gpu.nvidia.large"],
-            },
-          },
-        },
-        {
-          properties: {
-            machine: {
-              type: "object",
-              additionalProperties: false,
-              required: ["image"],
-              properties: {
-                image: {
-                  description:
-                    "The VM image to use. View [available images](https://circleci.com/docs/configuration-reference/#available-linux-gpu-images). **Note:** This key is **not** supported on the installable CircleCI. For information about customizing machine executor images on CircleCI installed on your servers, see our [VM Service documentation](https://circleci.com/docs/vm-service).",
-                  type: "string",
-                  enum: [
-                    "windows-server-2022-gui:2023.10.1",
-                    "windows-server-2022-gui:2023.09.1",
-                    "windows-server-2022-gui:2023.08.1",
-                    "windows-server-2022-gui:2023.07.1",
-                    "windows-server-2022-gui:2023.06.1",
-                    "windows-server-2022-gui:2023.05.1",
-                    "windows-server-2022-gui:2023.04.1",
-                    "windows-server-2022-gui:2023.03.1",
-                    "windows-server-2022-gui:2022.08.1",
-                    "windows-server-2022-gui:2022.07.1",
-                    "windows-server-2022-gui:2022.06.1",
-                    "windows-server-2022-gui:2022.04.1",
-                    "windows-server-2022-gui:current",
-                    "windows-server-2022-gui:edge",
-                    "windows-server-2019:2023.10.1",
-                    "windows-server-2019:2023.08.1",
-                    "windows-server-2019:2023.04.1",
-                    "windows-server-2019:2022.08.1",
-                    "windows-server-2019:current",
-                    "windows-server-2019:edge",
-                  ],
-                },
-                docker_layer_caching: {
-                  $ref: "#/definitions/dockerLayerCaching",
-                },
-              },
-            },
-            resource_class: {
-              description:
-                "Amount of CPU and RAM allocated for each job. View [available resource classes](https://circleci.com/docs/configuration-reference/#gpu-execution-environment-linux)",
-              type: "string",
-              enum: ["medium", "large", "xlarge", "2xlarge"],
-            },
-          },
-        },
-        {
-          properties: {
-            machine: {
-              type: "object",
-              additionalProperties: false,
-              required: ["image"],
-              properties: {
-                image: {
-                  description:
-                    "The VM image to use. View [available images](https://circleci.com/docs/configuration-reference/#available-linux-gpu-images). **Note:** This key is **not** supported on the installable CircleCI. For information about customizing machine executor images on CircleCI installed on your servers, see our [VM Service documentation](https://circleci.com/docs/vm-service).",
-                  type: "string",
-                  enum: [
-                    "windows-server-2019-cuda:current",
-                    "windows-server-2019-cuda:edge",
-                  ],
-                },
-                docker_layer_caching: {
-                  $ref: "#/definitions/dockerLayerCaching",
-                },
-              },
-            },
-            resource_class: {
-              description:
-                "Amount of CPU and RAM allocated for each job. View [available resource classes](https://circleci.com/docs/configuration-reference/#gpu-execution-environment-linux)",
-              type: "string",
-              enum: ["windows.gpu.nvidia.medium"],
-            },
-          },
-        },
-      ],
-    },
-    macosExecutor: {
-      description:
-        "Options for the [macOS executor](https://circleci.com/docs/configuration-reference#macos)",
-      type: "object",
-      required: ["macos"],
-      properties: {
-        macos: {
-          type: "object",
-          additionalProperties: false,
-          required: ["xcode"],
-          properties: {
-            xcode: {
-              description:
-                "The version of Xcode that is installed on the virtual machine, see the [Supported Xcode Versions section of the Testing iOS](https://circleci.com/docs/testing-ios#supported-xcode-versions) document for the complete list.",
-              type: "string",
-              enum: [
-                "15.0.0",
-                "14.3.1",
-                "14.2.0",
-                "14.1.0",
-                "14.0.1",
-                "13.4.1",
-                "12.5.1",
-              ],
-            },
-          },
-        },
-        resource_class: {
-          description:
-            "Amount of CPU and RAM allocated for each job. View [available resource classes](https://circleci.com/docs/configuration-reference/#macos-execution-environment)",
-          type: "string",
-          enum: [
-            "macos.x86.medium.gen2",
-            "macos.m1.medium.gen1",
-            "macos.m1.large.gen1",
-          ],
-        },
-      },
-    },
-    executorChoice: {
-      type: "object",
-      oneOf: [
-        {
-          $ref: "#/definitions/dockerExecutor",
-        },
-        {
-          $ref: "#/definitions/machineExecutor",
-        },
-        {
-          $ref: "#/definitions/macosExecutor",
-        },
-      ],
-    },
-    executors: {
-      description:
-        "Executors define the environment in which the steps of a job will be run, allowing you to reuse a single executor definition across multiple jobs.",
-      type: "object",
-      additionalProperties: {
-        type: "object",
-        $ref: "#/definitions/executorChoice",
-        properties: {
-          shell: {
-            description:
-              "Shell to use for execution command in all steps. Can be overridden by shell in each step (default: See [Default Shell Options](https://circleci.com/docs/configuration-reference#default-shell-options)",
-            type: "string",
-          },
-          working_directory: {
-            description: "In which directory to run the steps.",
-            type: "string",
-          },
-          environment: {
-            description: "A map of environment variable names and values.",
-            type: "object",
-            additionalProperties: {
-              type: ["string", "number"],
-            },
-          },
-        },
-      },
-    },
-    builtinSteps: {
-      documentation: {
-        run: {
-          description:
-            "https://circleci.com/docs/configuration-reference#run\n\nUsed for invoking all command-line programs, taking either a map of configuration values, or, when called in its short-form, a string that will be used as both the `command` and `name`. Run commands are executed using non-login shells by default, so you must explicitly source any dotfiles as part of the command.",
-        },
-        checkout: {
-          description:
-            "https://circleci.com/docs/configuration-reference#checkout\n\nSpecial step used to check out source code to the configured `path` (defaults to the `working_directory`). The reason this is a special step is because it is more of a helper function designed to make checking out code easy for you. If you require doing git over HTTPS you should not use this step as it configures git to checkout over ssh.",
-        },
-        setup_remote_docker: {
-          description:
-            "https://circleci.com/docs/configuration-reference#setup_remote_docker\n\nCreates a remote Docker environment configured to execute Docker commands.",
-        },
-        save_cache: {
-          description:
-            "https://circleci.com/docs/configuration-reference#save_cache\n\nGenerates and stores a cache of a file or directory of files such as dependencies or source code in our object storage. Later jobs can restore this cache using the `restore_cache` step.",
-        },
-        restore_cache: {
-          description:
-            "https://circleci.com/docs/configuration-reference#restore_cache\n\nRestores a previously saved cache based on a `key`. Cache needs to have been saved first for this key using the `save_cache` step.",
-        },
-        deploy: {
-          description:
-            "https://circleci.com/docs/configuration-reference#deploy\n\nSpecial step for deploying artifacts. `deploy` uses the same configuration map and semantics as run step. Jobs may have more than one deploy step. In general deploy step behaves just like run with two exceptions:\n* In a job with parallelism, the deploy step will only be executed by node #0 and only if all nodes succeed. Nodes other than #0 will skip this step.\n* In a job that runs with SSH, the deploy step will not execute",
-        },
-        store_artifacts: {
-          description:
-            "https://circleci.com/docs/configuration-reference#store_artifacts\n\nStep to store artifacts (for example logs, binaries, etc) to be available in the web app or through the API.",
-        },
-        store_test_results: {
-          description:
-            "https://circleci.com/docs/configuration-reference#storetestresults\n\nSpecial step used to upload test results so they display in builds' Test Summary section and can be used for timing analysis. To also see test result as build artifacts, please use the `store_artifacts` step.",
-        },
-        persist_to_workspace: {
-          description:
-            "https://circleci.com/docs/configuration-reference#persist_to_workspace\n\nSpecial step used to persist a temporary file to be used by another job in the workflow",
-        },
-        attach_workspace: {
-          description:
-            "https://circleci.com/docs/configuration-reference#attach_workspace\n\nSpecial step used to attach the workflow's workspace to the current container. The full contents of the workspace are downloaded and copied into the directory the workspace is being attached at.",
-        },
-        add_ssh_keys: {
-          description:
-            "https://circleci.com/docs/configuration-reference#add_ssh_keys\n\nSpecial step that adds SSH keys from a project's settings to a container. Also configures SSH to use these keys.",
-        },
-        when: {
-          description:
-            "https://circleci.com/docs/configuration-reference#the-when-step-requires-version-21 \n\nConditional step to run on custom conditions (determined at config-compile time) that are checked before a workflow runs",
-        },
-        unless: {
-          description:
-            "https://circleci.com/docs/configuration-reference#the-when-step-requires-version-21 \n\nConditional step to run when custom conditions aren't met (determined at config-compile time) that are checked before a workflow runs",
-        },
-      },
-      configuration: {
-        run: {
-          allOf: [
-            {
-              $ref: "#/definitions/builtinSteps/documentation/run",
-            },
-          ],
-          oneOf: [
-            {
-              type: "string",
-            },
-            {
-              type: "object",
-              additionalProperties: false,
-              required: ["command"],
-              properties: {
-                command: {
-                  description: "Command to run via the shell",
-                  type: "string",
-                },
-                name: {
-                  description:
-                    "Title of the step to be shown in the CircleCI UI (default: full `command`)",
-                  type: "string",
-                },
-                shell: {
-                  description: "Shell to use for execution command",
-                  type: "string",
-                },
-                environment: {
-                  description:
-                    "Additional environmental variables, locally scoped to command",
-                  type: "object",
-                  additionalProperties: {
-                    type: ["string", "number"],
-                  },
-                },
-                background: {
-                  description:
-                    "Whether or not this step should run in the background (default: false)",
-                  default: false,
-                  type: "boolean",
-                },
-                working_directory: {
-                  description:
-                    "In which directory to run this step (default: `working_directory` of the job",
-                  type: "string",
-                },
-                no_output_timeout: {
-                  description:
-                    'Elapsed time the command can run without output. The string is a decimal with unit suffix, such as "20m", "1.25h", "5s" (default: 10 minutes)',
-                  type: "string",
-                  pattern: "\\d+(\\.\\d+)?[mhs]",
-                  default: "10m",
-                },
-                when: {
-                  description:
-                    "Specify when to enable or disable the step. Takes the following values: `always`, `on_success`, `on_fail` (default: `on_success`)",
-                  enum: ["always", "on_success", "on_fail"],
-                },
-              },
-            },
-          ],
-        },
-        checkout: {
-          allOf: [
-            {
-              $ref: "#/definitions/builtinSteps/documentation/checkout",
-            },
-          ],
-          type: "object",
-          additionalProperties: false,
-          properties: {
-            name: {
-              description: "Title of the step to be shown in the CircleCI UI",
-              type: "string",
-            },
-            path: {
-              description:
-                "Checkout directory (default: job's `working_directory`)",
-              type: "string",
-            },
-          },
-        },
-        setup_remote_docker: {
-          allOf: [
-            {
-              $ref: "#/definitions/builtinSteps/documentation/setup_remote_docker",
-            },
-          ],
-          type: "object",
-          additionalProperties: false,
-          properties: {
-            name: {
-              description: "Title of the step to be shown in the CircleCI UI",
-              type: "string",
-            },
-            docker_layer_caching: {
-              description:
-                "When `docker_layer_caching` is set to `true`, CircleCI will try to reuse Docker Images (layers) built during a previous job or workflow (Paid feature)",
-              type: "boolean",
-              default: false,
-            },
-            version: {
-              description:
-                "If your build requires a specific docker image, you can set it as an image attribute",
-              anyOf: [
-                {
-                  type: "string",
-                  enum: [
-                    "20.10.24",
-                    "20.10.23",
-                    "20.10.18",
-                    "20.10.17",
-                    "20.10.14",
-                    "20.10.12",
-                    "20.10.11",
-                    "20.10.7",
-                    "20.10.6",
-                    "20.10.2",
-                    "19.03.13",
-                  ],
-                },
-                {
-                  type: "string",
-                },
-              ],
-            },
-          },
-        },
-        save_cache: {
-          allOf: [
-            {
-              $ref: "#/definitions/builtinSteps/documentation/save_cache",
-            },
-          ],
-          type: "object",
-          additionalProperties: false,
-          required: ["paths", "key"],
-          properties: {
-            paths: {
-              description:
-                "List of directories which should be added to the cache",
-              type: "array",
-              items: {
+                  "Specifies the working directory where the command is run.",
                 type: "string",
               },
             },
-            key: {
-              description: "Unique identifier for this cache",
-              type: "string",
-            },
-            name: {
-              type: "string",
-              description:
-                "Title of the step to be shown in the CircleCI UI (default: 'Saving Cache')",
-            },
-            when: {
-              description:
-                "Specify when to enable or disable the step. Takes the following values: `always`, `on_success`, `on_fail` (default: `on_success`)",
-              enum: ["always", "on_success", "on_fail"],
-            },
+            oneOf: [
+              {
+                required: ["run", "shell"],
+              },
+              {
+                required: ["uses"],
+              },
+            ],
+            additionalProperties: false,
           },
         },
-        restore_cache: {
-          allOf: [
-            {
-              $ref: "#/definitions/builtinSteps/documentation/restore_cache",
-            },
-          ],
+      },
+      required: ["using", "steps"],
+      additionalProperties: false,
+    },
+    "runs-docker": {
+      $comment:
+        "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-docker-actions",
+      description: "Configures the image used for the Docker action.",
+      type: "object",
+      properties: {
+        using: {
+          $comment:
+            "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsusing-2",
+          description: "You must set this value to 'docker'.",
+          const: "docker",
+        },
+        image: {
+          $comment:
+            "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsimage",
+          description:
+            "The Docker image to use as the container to run the action. The value can be the Docker base image name, a local `Dockerfile` in your repository, or a public image in Docker Hub or another registry. To reference a `Dockerfile` local to your repository, use a path relative to your action metadata file. The `docker` application will execute this file.",
+          type: "string",
+        },
+        env: {
+          $comment:
+            "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsenv",
+          description:
+            "Specifies a key/value map of environment variables to set in the container environment.",
           oneOf: [
             {
               type: "object",
-              additionalProperties: false,
-              required: ["key"],
-              properties: {
-                key: {
-                  type: "string",
-                  description: "Single cache key to restore",
-                },
-                name: {
-                  type: "string",
-                  description:
-                    "Title of the step to be shown in the CircleCI UI (default: 'Restoring Cache')",
-                },
-              },
-            },
-            {
-              type: "object",
-              additionalProperties: false,
-              required: ["keys"],
-              properties: {
-                name: {
-                  type: "string",
-                  description:
-                    "Title of the step to be shown in the CircleCI UI (default: 'Restoring Cache')",
-                },
-                keys: {
-                  description:
-                    "List of cache keys to lookup for a cache to restore. Only first existing key will be restored.",
-                  type: "array",
-                  items: {
+              additionalProperties: {
+                oneOf: [
+                  {
                     type: "string",
                   },
-                },
+                  {
+                    type: "number",
+                  },
+                  {
+                    type: "boolean",
+                  },
+                ],
               },
             },
-          ],
-        },
-        deploy: {
-          allOf: [
             {
-              $ref: "#/definitions/builtinSteps/documentation/deploy",
-            },
-            {
-              $ref: "#/definitions/builtinSteps/configuration/run",
+              $ref: "#/definitions/stringContainingExpressionSyntax",
             },
           ],
         },
-        store_artifacts: {
-          allOf: [
-            {
-              $ref: "#/definitions/builtinSteps/documentation/store_artifacts",
-            },
-          ],
-          type: "object",
-          additionalProperties: false,
-          required: ["path"],
-          properties: {
-            name: {
-              description: "Title of the step to be shown in the CircleCI UI",
-              type: "string",
-            },
-            path: {
-              description:
-                "Directory in the primary container to save as job artifacts",
-              type: "string",
-            },
-            destination: {
-              description:
-                "Prefix added to the artifact paths in the artifacts API (default: the directory of the file specified in `path`)",
-              type: "string",
-            },
-          },
-        },
-        store_test_results: {
-          allOf: [
-            {
-              $ref: "#/definitions/builtinSteps/documentation/store_test_results",
-            },
-          ],
-          type: "object",
-          additionalProperties: false,
-          required: ["path"],
-          properties: {
-            name: {
-              description: "Title of the step to be shown in the CircleCI UI",
-              type: "string",
-            },
-            path: {
-              description:
-                "Path (absolute, or relative to your `working_directory`) to directory containing subdirectories of JUnit XML or Cucumber JSON test metadata files",
-              type: "string",
-            },
-          },
-        },
-        persist_to_workspace: {
-          allOf: [
-            {
-              $ref: "#/definitions/builtinSteps/documentation/persist_to_workspace",
-            },
-          ],
-          type: "object",
-          additionalProperties: false,
-          required: ["root", "paths"],
-          properties: {
-            name: {
-              description: "Title of the step to be shown in the CircleCI UI",
-              type: "string",
-            },
-            root: {
-              description:
-                "Either an absolute path or a path relative to `working_directory`",
-              type: "string",
-            },
-            paths: {
-              description:
-                "Glob identifying file(s), or a non-glob path to a directory to add to the shared workspace. Interpreted as relative to the workspace root. Must not be the workspace root itself.",
-              type: "array",
-              items: {
-                type: "string",
-              },
-            },
-          },
-        },
-        attach_workspace: {
-          allOf: [
-            {
-              $ref: "#/definitions/builtinSteps/documentation/attach_workspace",
-            },
-          ],
-          type: "object",
-          additionalProperties: false,
-          required: ["at"],
-          properties: {
-            name: {
-              description: "Title of the step to be shown in the CircleCI UI",
-              type: "string",
-            },
-            at: {
-              description: "Directory to attach the workspace to",
-              type: "string",
-            },
-          },
-        },
-        add_ssh_keys: {
-          allOf: [
-            {
-              $ref: "#/definitions/builtinSteps/documentation/add_ssh_keys",
-            },
-          ],
-          type: "object",
-          additionalProperties: false,
-          properties: {
-            name: {
-              description: "Title of the step to be shown in the CircleCI UI",
-              type: "string",
-            },
-            fingerprints: {
-              description: "Directory to attach the workspace to",
-              type: "array",
-              items: {
-                type: "string",
-              },
-            },
-          },
-        },
-        when: {
-          allOf: [
-            {
-              $ref: "#/definitions/builtinSteps/documentation/when",
-            },
-          ],
-          type: "object",
-          additionalProperties: false,
-          properties: {
-            condition: {
-              $ref: "#/definitions/logical",
-            },
-            steps: {
-              description: "A list of steps to be performed",
-              type: "array",
-              items: {
-                $ref: "#/definitions/step",
-              },
-            },
-          },
-          required: ["condition", "steps"],
-        },
-        unless: {
-          allOf: [
-            {
-              $ref: "#/definitions/builtinSteps/documentation/unless",
-            },
-          ],
-          type: "object",
-          additionalProperties: false,
-          properties: {
-            condition: {
-              $ref: "#/definitions/logical",
-            },
-            steps: {
-              description: "A list of steps to be performed",
-              type: "array",
-              items: {
-                $ref: "#/definitions/step",
-              },
-            },
-          },
-          required: ["condition", "steps"],
-        },
-      },
-    },
-    step: {
-      anyOf: [
-        {
-          $ref: "#/definitions/builtinSteps/documentation/checkout",
-          enum: ["checkout"],
-        },
-        {
-          $ref: "#/definitions/builtinSteps/documentation/setup_remote_docker",
-          enum: ["setup_remote_docker"],
-        },
-        {
-          $ref: "#/definitions/builtinSteps/documentation/add_ssh_keys",
-          enum: ["add_ssh_keys"],
-        },
-        {
+        entrypoint: {
+          $comment:
+            "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsentrypoint",
           description:
-            "https://circleci.com/docs/reusing-config#invoking-reusable-commands\n\nA custom command defined via the top level commands key",
+            "Overrides the Docker `ENTRYPOINT` in the `Dockerfile`, or sets it if one wasn't already specified. Use `entrypoint` when the `Dockerfile` does not specify an `ENTRYPOINT` or you want to override the `ENTRYPOINT` instruction. If you omit `entrypoint`, the commands you specify in the Docker `ENTRYPOINT` instruction will execute. The Docker `ENTRYPOINT instruction has a *shell* form and *exec* form. The Docker `ENTRYPOINT` documentation recommends using the *exec* form of the `ENTRYPOINT` instruction.",
           type: "string",
-          pattern: "^[a-z][a-z0-9_-]+$",
         },
-        {
+        "pre-entrypoint": {
+          $comment:
+            "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#pre-entrypoint",
           description:
-            "https://circleci.com/docs/using-orbs#commands\n\nA custom command defined via an orb.",
+            "Allows you to run a script before the `entrypoint` action begins. For example, you can use `pre-entrypoint:` to run a prerequisite setup script. GitHub Actions uses `docker run` to launch this action, and runs the script inside a new container that uses the same base image. This means that the runtime state is different from the main `entrypoint` container, and any states you require must be accessed in either the workspace, `HOME`, or as a `STATE_` variable. The `pre-entrypoint:` action always runs by default but you can override this using `pre-if`.",
           type: "string",
-          pattern: "^[a-z][a-z0-9_-]+/[a-z][a-z0-9_-]+$",
         },
-        {
-          type: "object",
-          minProperties: 1,
-          maxProperties: 1,
-          properties: {
-            run: {
-              $ref: "#/definitions/builtinSteps/configuration/run",
-            },
-            checkout: {
-              $ref: "#/definitions/builtinSteps/configuration/checkout",
-            },
-            setup_remote_docker: {
-              $ref: "#/definitions/builtinSteps/configuration/setup_remote_docker",
-            },
-            save_cache: {
-              $ref: "#/definitions/builtinSteps/configuration/save_cache",
-            },
-            restore_cache: {
-              $ref: "#/definitions/builtinSteps/configuration/restore_cache",
-            },
-            deploy: {
-              $ref: "#/definitions/builtinSteps/configuration/deploy",
-            },
-            store_artifacts: {
-              $ref: "#/definitions/builtinSteps/configuration/store_artifacts",
-            },
-            store_test_results: {
-              $ref: "#/definitions/builtinSteps/configuration/store_test_results",
-            },
-            persist_to_workspace: {
-              $ref: "#/definitions/builtinSteps/configuration/persist_to_workspace",
-            },
-            attach_workspace: {
-              $ref: "#/definitions/builtinSteps/configuration/attach_workspace",
-            },
-            add_ssh_keys: {
-              $ref: "#/definitions/builtinSteps/configuration/add_ssh_keys",
-            },
-            when: {
-              $ref: "#/definitions/builtinSteps/configuration/when",
-            },
-            unless: {
-              $ref: "#/definitions/builtinSteps/configuration/unless",
-            },
-          },
-          patternProperties: {
-            "^[a-z][a-z0-9_-]+$": {
-              description:
-                "https://circleci.com/docs/reusing-config#invoking-reusable-commands\n\nA custom command defined via the top level commands key",
-            },
-            "^[a-z][a-z0-9_-]+/[a-z][a-z0-9_-]+$": {
-              description:
-                "https://circleci.com/docs/using-orbs#commands\n\nA custom command defined via an orb.",
-            },
-          },
+        "pre-if": {
+          $ref: "#/definitions/pre-if",
         },
-      ],
-    },
-    jobRef: {
-      description: "Run a job as part of this workflow",
-      type: "object",
-      additionalProperties: true,
-      properties: {
-        requires: {
+        "post-entrypoint": {
+          $comment:
+            "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#post-entrypoint",
           description:
-            "Jobs are run in parallel by default, so you must explicitly require any dependencies by their job name.",
+            "Allows you to run a cleanup script once the `runs.entrypoint` action has completed. GitHub Actions uses `docker run` to launch this action. Because GitHub Actions runs the script inside a new container using the same base image, the runtime state is different from the main `entrypoint` container. You can access any state you need in either the workspace, `HOME`, or as a `STATE_` variable. The `post-entrypoint:` action always runs by default but you can override this using `post-if`.",
+          type: "string",
+        },
+        "post-if": {
+          $ref: "#/definitions/post-if",
+        },
+        args: {
+          $comment:
+            "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsargs",
+          description:
+            "An array of strings that define the inputs for a Docker container. Inputs can include hardcoded strings. GitHub passes the `args` to the container's `ENTRYPOINT` when the container starts up.\nThe `args` are used in place of the `CMD` instruction in a `Dockerfile`. If you use `CMD` in your `Dockerfile`, use the guidelines ordered by preference:\n- Document required arguments in the action's README and omit them from the `CMD` instruction.\n- Use defaults that allow using the action without specifying any `args`.\n- If the action exposes a `--help` flag, or something similar, use that to make your action self-documenting.",
           type: "array",
           items: {
             type: "string",
           },
         },
-        name: {
+      },
+      required: ["using", "image"],
+      additionalProperties: false,
+    },
+    outputs: {
+      $comment:
+        "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#outputs",
+      description:
+        "Output parameters allow you to declare data that an action sets. Actions that run later in a workflow can use the output data set in previously run actions. For example, if you had an action that performed the addition of two inputs (x + y = z), the action could output the sum (z) for other actions to use as an input.\nIf you don't declare an output in your action metadata file, you can still set outputs and use them in a workflow.",
+      type: "object",
+      patternProperties: {
+        "^[_a-zA-Z][a-zA-Z0-9_-]*$": {
+          $comment:
+            "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#outputsoutput_id",
           description:
-            "The name key can be used to ensure build numbers are not appended when invoking the same job multiple times (e.g., sayhello-1, sayhello-2). The name assigned needs to be unique, otherwise numbers will still be appended to the job name",
-          type: "string",
-        },
-        context: {
-          description:
-            "Either a single context name, or a list of contexts. The default name is `org-global`",
-          oneOf: [
-            {
-              type: "string",
-            },
-            {
-              type: "array",
-              items: {
-                type: "string",
-              },
-            },
-          ],
-          default: "org-global",
-        },
-        type: {
-          description:
-            "A job may have a `type` of `approval` indicating it must be manually approved before downstream jobs may proceed.",
-          enum: ["approval"],
-        },
-        filters: {
-          description:
-            "A map defining rules for execution on specific branches",
+            "A string identifier to associate with the output. The value of `<output_id>` is a map of the output's metadata. The `<output_id>` must be a unique identifier within the outputs object. The `<output_id>` must start with a letter or `_` and contain only alphanumeric characters, `-`, or `_`.",
           type: "object",
-          additionalProperties: false,
           properties: {
-            branches: {
-              $ref: "#/definitions/filter",
-            },
-            tags: {
-              $ref: "#/definitions/filter",
-            },
-          },
-        },
-        matrix: {
-          description:
-            "https://circleci.com/docs/configuration-reference#matrix-requires-version-21\n\nThe matrix stanza allows you to run a parameterized job multiple times with different arguments.",
-          type: "object",
-          additionalProperties: false,
-          required: ["parameters"],
-          properties: {
-            parameters: {
-              description:
-                "A map of parameter names to every value the job should be called with",
-              type: "object",
-              additionalProperties: {
-                type: "array",
-              },
-            },
-            exclude: {
-              description:
-                "A list of argument maps that should be excluded from the matrix",
-              type: "array",
-              items: {
-                type: "object",
-              },
-            },
-            alias: {
-              description:
-                "An alias for the matrix, usable from another job's requires stanza. Defaults to the name of the job being executed",
+            description: {
+              $comment:
+                "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#outputsoutput_iddescription",
+              description: "A string description of the output parameter.",
               type: "string",
             },
           },
+          required: ["description"],
+          additionalProperties: false,
         },
       },
+      additionalProperties: false,
     },
-    jobs: {
+    "outputs-composite": {
+      $comment:
+        "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#outputs-for-composite-run-steps-actions",
       description:
-        "Jobs are collections of steps. All of the steps in the job are executed in a single unit, either within a fresh container or VM.",
+        "Output parameters allow you to declare data that an action sets. Actions that run later in a workflow can use the output data set in previously run actions. For example, if you had an action that performed the addition of two inputs (x + y = z), the action could output the sum (z) for other actions to use as an input.\nIf you don't declare an output in your action metadata file, you can still set outputs and use them in a workflow.",
       type: "object",
-      additionalProperties: {
-        type: "object",
-        oneOf: [
-          {
-            $ref: "#/definitions/executorChoice",
-          },
-          {
-            type: "object",
-            required: ["executor"],
-            properties: {
-              executor: {
-                description:
-                  "The name of the executor to use (defined via the top level executors map).",
-                type: "string",
-              },
-            },
-          },
-          {
-            type: "object",
-            required: ["executor"],
-            properties: {
-              executor: {
-                description: "Executor stanza to use for the job",
-                type: "object",
-                required: ["name"],
-                properties: {
-                  name: {
-                    description:
-                      "The name of the executor to use (defined via the top level executors map).",
-                    type: "string",
-                  },
-                },
-              },
-            },
-          },
-        ],
-        required: ["steps"],
-        properties: {
-          shell: {
-            description:
-              "Shell to use for execution command in all steps. Can be overridden by shell in each step",
-            type: "string",
-          },
-          steps: {
-            description: "A list of steps to be performed",
-            type: "array",
-            items: {
-              $ref: "#/definitions/step",
-            },
-          },
-          working_directory: {
-            description:
-              "In which directory to run the steps. (default: `~/project`. `project` is a literal string, not the name of the project.) You can also refer the directory with `$CIRCLE_WORKING_DIRECTORY` environment variable.",
-            type: "string",
-            default: "~/project",
-          },
-          parallelism: {
-            description:
-              "Number of parallel instances of this job to run (default: 1)",
-            default: 1,
-            oneOf: [
-              {
-                type: "integer",
-              },
-              {
-                type: "string",
-                pattern: "^<<.+\\..+>>$",
-              },
-            ],
-          },
-          environment: {
-            description:
-              "A map of environment variable names and variables (NOTE: these will override any environment variables you set in the CircleCI web interface).",
-            type: "object",
-            additionalProperties: {
-              type: ["string", "number"],
-            },
-          },
-          branches: {
-            description:
-              "A map defining rules for whitelisting/blacklisting execution of specific branches for a single job that is **not** in a workflow (default: all whitelisted). See Workflows for configuring branch execution for jobs in a workflow.",
-            type: "object",
-            additionalProperties: {
+      patternProperties: {
+        "^[_a-zA-Z][a-zA-Z0-9_-]*$": {
+          $comment:
+            "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#outputsoutput_id",
+          description:
+            "A string identifier to associate with the output. The value of `<output_id>` is a map of the output's metadata. The `<output_id>` must be a unique identifier within the outputs object. The `<output_id>` must start with a letter or `_` and contain only alphanumeric characters, `-`, or `_`.",
+          type: "object",
+          properties: {
+            description: {
+              $comment:
+                "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#outputsoutput_iddescription",
+              description: "A string description of the output parameter.",
               type: "string",
             },
+            value: {
+              $comment:
+                "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#outputsoutput_idvalue",
+              description:
+                "The value that the output parameter will be mapped to. You can set this to a string or an expression with context. For example, you can use the steps context to set the value of an output to the output value of a step.",
+              type: "string",
+            },
+          },
+          required: ["description", "value"],
+          additionalProperties: false,
+        },
+      },
+      additionalProperties: false,
+    },
+  },
+  else: {
+    properties: {
+      outputs: {
+        $ref: "#/definitions/outputs",
+      },
+    },
+  },
+  if: {
+    properties: {
+      runs: {
+        properties: {
+          using: {
+            const: "composite",
           },
         },
       },
     },
   },
   properties: {
-    version: {
+    name: {
+      $comment:
+        "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#name",
       description:
-        "The version field is intended to be used in order to issue warnings for deprecation or breaking changes.",
-      default: 2.1,
-      enum: [2, 2.1],
+        "The name of your action. GitHub displays the `name` in the Actions tab to help visually identify actions in each job.",
+      type: "string",
     },
-    orbs: {
-      $ref: "#/definitions/orbs",
+    author: {
+      $comment:
+        "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#author",
+      description: "The name of the action's author.",
+      type: "string",
     },
-    commands: {
-      $ref: "#/definitions/commands",
+    description: {
+      $comment:
+        "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#description",
+      description: "A short description of the action.",
+      type: "string",
     },
-    executors: {
-      $ref: "#/definitions/executors",
-    },
-    jobs: {
-      $ref: "#/definitions/jobs",
-    },
-    workflows: {
+    inputs: {
+      $comment:
+        "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#inputs",
       description:
-        "Used for orchestrating all jobs. Each workflow consists of the workflow name as a key and a map as a value",
+        "Input parameters allow you to specify data that the action expects to use during runtime. GitHub stores input parameters as environment variables. Input ids with uppercase letters are converted to lowercase during runtime. We recommended using lowercase input ids.",
       type: "object",
-      properties: {
-        version: {
+      patternProperties: {
+        "^[_a-zA-Z][a-zA-Z0-9_-]*$": {
+          $comment:
+            "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#inputsinput_id",
           description:
-            "The Workflows `version` field is used to issue warnings for deprecation or breaking changes during v2 Beta. It is deprecated as of CircleCI v2.1",
-          enum: [2],
+            "A string identifier to associate with the input. The value of `<input_id>` is a map of the input's metadata. The `<input_id>` must be a unique identifier within the inputs object. The `<input_id>` must start with a letter or `_` and contain only alphanumeric characters, `-`, or `_`.",
+          type: "object",
+          properties: {
+            description: {
+              $comment:
+                "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#inputsinput_iddescription",
+              description: "A string description of the input parameter.",
+              type: "string",
+            },
+            deprecationMessage: {
+              description:
+                "A string shown to users using the deprecated input.",
+              type: "string",
+            },
+            required: {
+              $comment:
+                "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#inputsinput_idrequired",
+              description:
+                "A boolean to indicate whether the action requires the input parameter. Set to `true` when the parameter is required.",
+              type: "boolean",
+            },
+            default: {
+              $comment:
+                "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#inputsinput_iddefault",
+              description:
+                "A string representing the default value. The default value is used when an input parameter isn't specified in a workflow file.",
+              type: "string",
+            },
+          },
+          required: ["description"],
+          additionalProperties: false,
         },
       },
-      additionalProperties: {
-        type: "object",
-        additionalProperties: false,
-        properties: {
-          triggers: {
-            description:
-              "Specifies which triggers will cause this workflow to be executed. Default behavior is to trigger the workflow when pushing to a branch.",
-            type: "array",
-            items: {
-              type: "object",
-              additionalProperties: false,
-              properties: {
-                schedule: {
-                  description:
-                    "A workflow may have a schedule indicating it runs at a certain time, for example a nightly build that runs every day at 12am UTC:",
-                  type: "object",
-                  properties: {
-                    cron: {
-                      description:
-                        "See the [crontab man page](http://pubs.opengroup.org/onlinepubs/7908799/xcu/crontab.html)",
-                      type: "string",
-                    },
-                    filters: {
-                      description:
-                        "A map defining rules for execution on specific branches",
-                      type: "object",
-                      additionalProperties: false,
-                      properties: {
-                        branches: {
-                          $ref: "#/definitions/filter",
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-          jobs: {
-            type: "array",
-            items: {
-              oneOf: [
-                {
-                  type: "string",
-                },
-                {
-                  type: "object",
-                  additionalProperties: {
-                    type: "object",
-                    $ref: "#/definitions/jobRef",
-                  },
-                },
-              ],
-            },
-          },
-          when: {
-            description: "Specify when to run the workflow.",
-            $ref: "#/definitions/logical",
-          },
-          unless: {
-            description: "Specify when *not* to run the workflow.",
-            $ref: "#/definitions/logical",
-          },
+      additionalProperties: false,
+    },
+    outputs: {
+      $comment:
+        "Because of `additionalProperties: false`, this empty schema is needed to allow the `outputs` property. The `outputs` subschema is determined by the if/then/else keywords.",
+    },
+    runs: {
+      oneOf: [
+        {
+          $ref: "#/definitions/runs-javascript",
         },
+        {
+          $ref: "#/definitions/runs-composite",
+        },
+        {
+          $ref: "#/definitions/runs-docker",
+        },
+      ],
+    },
+    branding: {
+      $comment:
+        "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#branding",
+      description:
+        "You can use a color and Feather icon to create a badge to personalize and distinguish your action. Badges are shown next to your action name in GitHub Marketplace.",
+      type: "object",
+      properties: {
+        color: {
+          $comment:
+            "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#brandingcolor",
+          description: "The background color of the badge.",
+          type: "string",
+          enum: [
+            "white",
+            "yellow",
+            "blue",
+            "green",
+            "orange",
+            "red",
+            "purple",
+            "gray-dark",
+          ],
+        },
+        icon: {
+          $comment:
+            "https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#brandingicon",
+          description: "The name of the Feather icon to use.",
+          type: "string",
+          enum: [
+            "activity",
+            "airplay",
+            "alert-circle",
+            "alert-octagon",
+            "alert-triangle",
+            "align-center",
+            "align-justify",
+            "align-left",
+            "align-right",
+            "anchor",
+            "aperture",
+            "archive",
+            "arrow-down-circle",
+            "arrow-down-left",
+            "arrow-down-right",
+            "arrow-down",
+            "arrow-left-circle",
+            "arrow-left",
+            "arrow-right-circle",
+            "arrow-right",
+            "arrow-up-circle",
+            "arrow-up-left",
+            "arrow-up-right",
+            "arrow-up",
+            "at-sign",
+            "award",
+            "bar-chart-2",
+            "bar-chart",
+            "battery-charging",
+            "battery",
+            "bell-off",
+            "bell",
+            "bluetooth",
+            "bold",
+            "book-open",
+            "book",
+            "bookmark",
+            "box",
+            "briefcase",
+            "calendar",
+            "camera-off",
+            "camera",
+            "cast",
+            "check-circle",
+            "check-square",
+            "check",
+            "chevron-down",
+            "chevron-left",
+            "chevron-right",
+            "chevron-up",
+            "chevrons-down",
+            "chevrons-left",
+            "chevrons-right",
+            "chevrons-up",
+            "circle",
+            "clipboard",
+            "clock",
+            "cloud-drizzle",
+            "cloud-lightning",
+            "cloud-off",
+            "cloud-rain",
+            "cloud-snow",
+            "cloud",
+            "code",
+            "command",
+            "compass",
+            "copy",
+            "corner-down-left",
+            "corner-down-right",
+            "corner-left-down",
+            "corner-left-up",
+            "corner-right-down",
+            "corner-right-up",
+            "corner-up-left",
+            "corner-up-right",
+            "cpu",
+            "credit-card",
+            "crop",
+            "crosshair",
+            "database",
+            "delete",
+            "disc",
+            "dollar-sign",
+            "download-cloud",
+            "download",
+            "droplet",
+            "edit-2",
+            "edit-3",
+            "edit",
+            "external-link",
+            "eye-off",
+            "eye",
+            "facebook",
+            "fast-forward",
+            "feather",
+            "file-minus",
+            "file-plus",
+            "file-text",
+            "file",
+            "film",
+            "filter",
+            "flag",
+            "folder-minus",
+            "folder-plus",
+            "folder",
+            "gift",
+            "git-branch",
+            "git-commit",
+            "git-merge",
+            "git-pull-request",
+            "globe",
+            "grid",
+            "hard-drive",
+            "hash",
+            "headphones",
+            "heart",
+            "help-circle",
+            "home",
+            "image",
+            "inbox",
+            "info",
+            "italic",
+            "layers",
+            "layout",
+            "life-buoy",
+            "link-2",
+            "link",
+            "list",
+            "loader",
+            "lock",
+            "log-in",
+            "log-out",
+            "mail",
+            "map-pin",
+            "map",
+            "maximize-2",
+            "maximize",
+            "menu",
+            "message-circle",
+            "message-square",
+            "mic-off",
+            "mic",
+            "minimize-2",
+            "minimize",
+            "minus-circle",
+            "minus-square",
+            "minus",
+            "monitor",
+            "moon",
+            "more-horizontal",
+            "more-vertical",
+            "move",
+            "music",
+            "navigation-2",
+            "navigation",
+            "octagon",
+            "package",
+            "paperclip",
+            "pause-circle",
+            "pause",
+            "percent",
+            "phone-call",
+            "phone-forwarded",
+            "phone-incoming",
+            "phone-missed",
+            "phone-off",
+            "phone-outgoing",
+            "phone",
+            "pie-chart",
+            "play-circle",
+            "play",
+            "plus-circle",
+            "plus-square",
+            "plus",
+            "pocket",
+            "power",
+            "printer",
+            "radio",
+            "refresh-ccw",
+            "refresh-cw",
+            "repeat",
+            "rewind",
+            "rotate-ccw",
+            "rotate-cw",
+            "rss",
+            "save",
+            "scissors",
+            "search",
+            "send",
+            "server",
+            "settings",
+            "share-2",
+            "share",
+            "shield-off",
+            "shield",
+            "shopping-bag",
+            "shopping-cart",
+            "shuffle",
+            "sidebar",
+            "skip-back",
+            "skip-forward",
+            "slash",
+            "sliders",
+            "smartphone",
+            "speaker",
+            "square",
+            "star",
+            "stop-circle",
+            "sun",
+            "sunrise",
+            "sunset",
+            "tablet",
+            "tag",
+            "target",
+            "terminal",
+            "thermometer",
+            "thumbs-down",
+            "thumbs-up",
+            "toggle-left",
+            "toggle-right",
+            "trash-2",
+            "trash",
+            "trending-down",
+            "trending-up",
+            "triangle",
+            "truck",
+            "tv",
+            "type",
+            "umbrella",
+            "underline",
+            "unlock",
+            "upload-cloud",
+            "upload",
+            "user-check",
+            "user-minus",
+            "user-plus",
+            "user-x",
+            "user",
+            "users",
+            "video-off",
+            "video",
+            "voicemail",
+            "volume-1",
+            "volume-2",
+            "volume-x",
+            "volume",
+            "watch",
+            "wifi-off",
+            "wifi",
+            "wind",
+            "x-circle",
+            "x-square",
+            "x",
+            "zap-off",
+            "zap",
+            "zoom-in",
+            "zoom-out",
+          ],
+        },
+      },
+      additionalProperties: false,
+    },
+  },
+  required: ["name", "description", "runs"],
+  then: {
+    properties: {
+      outputs: {
+        $ref: "#/definitions/outputs-composite",
       },
     },
   },
-  required: ["version"],
-  title: "JSON schema for CircleCI configuration files",
   type: "object",
 } as const;
 
-export type CircleCIConfig = FromSchema<typeof schema>;
+export type GitHubActionsConfig = FromSchema<typeof schema>;

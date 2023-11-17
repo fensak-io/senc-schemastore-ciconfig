@@ -1,0 +1,47 @@
+{
+  "name": "@fensak-io/senc-jsonschema-circleciconfig",
+  "version": "0.0.1",
+  "author": "Fensak, LLC <info@fensak.io> (https://fensak.io)",
+  "license": "MPL-2.0",
+  "description": "Type definitions for CircleCI configuration files derived from jsonschema definition.",
+  "homepage": "https://github.com/fensak-io/senc-jsonschema-circleciconfig#readme",
+  "repository": "https://github.com/fensak-io/senc-jsonschema-circleciconfig.git",
+  "bugs": {
+    "url": "https://github.com/fensak-io/senc-jsonschema-circleciconfig/issues"
+  },
+  "type": "module",
+  "source": "src/index.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/module.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/module.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "fmt": "prettier -w .",
+    "build": "parcel build",
+    "release": "semantic-release"
+  },
+  "dependencies": {
+    "json-schema-to-ts": "^2.9.2"
+  },
+  "devDependencies": {
+    "@parcel/config-default": "2.9.3",
+    "@parcel/packager-ts": "2.9.3",
+    "@parcel/transformer-typescript-types": "2.9.3",
+    "@semantic-release/git": "^10.0.1",
+    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@typescript-eslint/parser": "^6.7.2",
+    "eslint": "^8.50.0",
+    "eslint-config-prettier": "^9.0.0",
+    "parcel": "^2.9.3",
+    "prettier": "3.0.3",
+    "semantic-release": "^22.0.5",
+    "typescript": "^5.2.2"
+  }
+}

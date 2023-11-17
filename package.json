@@ -1,13 +1,13 @@
 {
-  "name": "@fensak-io/senc-jsonschema-circleciconfig",
+  "name": "@fensak-io/senc-jsonschema-githubactions",
   "version": "0.0.1",
   "author": "Fensak, LLC <info@fensak.io> (https://fensak.io)",
   "license": "MPL-2.0",
-  "description": "Type definitions for CircleCI configuration files derived from jsonschema definition.",
-  "homepage": "https://github.com/fensak-io/senc-jsonschema-circleciconfig#readme",
-  "repository": "https://github.com/fensak-io/senc-jsonschema-circleciconfig.git",
+  "description": "Type definitions for GitHub Actions configuration files derived from jsonschema definition.",
+  "homepage": "https://github.com/fensak-io/senc-jsonschema-githubactions#readme",
+  "repository": "https://github.com/fensak-io/senc-jsonschema-githubactions.git",
   "bugs": {
-    "url": "https://github.com/fensak-io/senc-jsonschema-circleciconfig/issues"
+    "url": "https://github.com/fensak-io/senc-jsonschema-githubactions/issues"
   },
   "type": "module",
   "source": "src/index.ts",

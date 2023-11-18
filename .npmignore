@@ -1,2 +1,6 @@
 src
 .parcel-cache
+build.mjs
+.eslintrc.cjs
+.prettierignore
+.prettierrc.cjs

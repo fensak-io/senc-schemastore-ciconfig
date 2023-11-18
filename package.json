@@ -1,6 +1,6 @@
 {
   "name": "@fensak-io/senc-jsonschema-githubactions",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Fensak, LLC <info@fensak.io> (https://fensak.io)",
   "license": "MPL-2.0",
   "description": "Type definitions for GitHub Actions configuration files derived from jsonschema definition.",
@@ -9,39 +9,15 @@
   "bugs": {
     "url": "https://github.com/fensak-io/senc-jsonschema-githubactions/issues"
   },
-  "type": "module",
-  "source": "src/index.ts",
-  "main": "./dist/index.cjs",
-  "module": "./dist/module.mjs",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/module.mjs",
-      "require": "./dist/index.cjs"
-    }
-  },
+  "types": "index.d.ts",
   "scripts": {
-    "lint": "node build.cjs && eslint .",
-    "fmt": "prettier -w .",
-    "build": "node build.cjs && parcel build",
+    "build": "node build.mjs && prettier -w .",
     "release": "semantic-release"
   },
-  "dependencies": {
-    "ajv": "^8.12.0"
-  },
   "devDependencies": {
-    "@parcel/config-default": "2.9.3",
-    "@parcel/packager-ts": "2.9.3",
-    "@parcel/transformer-typescript-types": "2.9.3",
     "@semantic-release/git": "^10.0.1",
-    "@typescript-eslint/eslint-plugin": "^6.7.2",
-    "@typescript-eslint/parser": "^6.7.2",
-    "eslint": "^8.50.0",
-    "eslint-config-prettier": "^9.0.0",
-    "parcel": "^2.9.3",
     "prettier": "3.0.3",
     "semantic-release": "^22.0.5",
-    "typescript": "^5.2.2"
+    "json-schema-to-typescript": "^13.1.1"
   }
 }

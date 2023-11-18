@@ -378,6 +378,7 @@ export type Ref = {
    * This interface was referenced by `undefined`'s JSON-Schema definition
    * via the `patternProperty` "^(branche|tag|path)s(-ignore)?$".
    */
+  // MANUALLY UPDATED
   [k: string]: unknown[] | undefined;
 } & ({
   [k: string]: unknown | undefined;
@@ -548,6 +549,7 @@ export type Ref2 = {
    * This interface was referenced by `undefined`'s JSON-Schema definition
    * via the `patternProperty` "^(branche|tag|path)s(-ignore)?$".
    */
+  // MANUALLY UPDATED
   [k: string]: string[] | undefined;
 } & ({
   [k: string]: unknown | undefined;

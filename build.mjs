@@ -19,5 +19,7 @@ const schema = await resp.json();
 // Update the id, since it is used to generate the base type.
 schema["$id"] = "GitHubActionsWorkflowConfig";
 
-const types = await compile(schema, "GitHubActionsWorkflowConfig");
+const types = await compile(schema, "GitHubActionsWorkflowConfig", {
+  strictIndexSignatures: true,
+});
 fs.writeFileSync(path.join(__dirname, "index.d.ts"), types);

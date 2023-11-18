@@ -1,6 +1,6 @@
 {
   "name": "@fensak-io/senc-jsonschema-githubactions",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "Fensak, LLC <info@fensak.io> (https://fensak.io)",
   "license": "MPL-2.0",
   "description": "Type definitions for GitHub Actions configuration files derived from jsonschema definition.",

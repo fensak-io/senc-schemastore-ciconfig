@@ -45,9 +45,9 @@ export type Event =
  */
 export type EventObject = {
   types?: Types;
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -64,9 +64,9 @@ export type Types = [
  */
 export type EventObject1 = {
   types?: Types1;
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -83,9 +83,9 @@ export type Types1 = [
  */
 export type EventObject2 = {
   types?: Types2;
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -102,9 +102,9 @@ export type Types2 = [
  */
 export type EventObject3 = {
   types?: Types3;
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -149,9 +149,9 @@ export type Types3 = [
  */
 export type EventObject4 = {
   types?: Types4;
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -168,9 +168,9 @@ export type Types4 = [
  */
 export type EventObject5 = {
   types?: Types5;
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -187,9 +187,9 @@ export type Types5 = [
  */
 export type EventObject6 = {
   types?: Types6;
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -240,9 +240,9 @@ export type Types6 = [
  */
 export type EventObject7 = {
   types?: Types7;
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -259,9 +259,9 @@ export type Types7 = [
  */
 export type EventObject8 = {
   types?: Types8;
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -278,9 +278,9 @@ export type Types8 = [
  */
 export type EventObject9 = {
   types?: Types9;
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -294,9 +294,9 @@ export type Types9 = ["checks_requested", ..."checks_requested"[]];
  */
 export type EventObject10 = {
   types?: Types10;
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -313,9 +313,9 @@ export type Types10 = [
  */
 export type EventObject11 = {
   types?: Types11;
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -332,9 +332,9 @@ export type Types11 = [
  */
 export type EventObject12 = {
   types?: Types12;
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -351,9 +351,9 @@ export type Types12 = [
  */
 export type EventObject13 = {
   types?: Types13;
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -378,9 +378,9 @@ export type Ref = {
    * This interface was referenced by `undefined`'s JSON-Schema definition
    * via the `patternProperty` "^(branche|tag|path)s(-ignore)?$".
    */
-  [k: string]: unknown[];
+  [k: string]: unknown[] | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -437,9 +437,9 @@ export type Types14 = [
  */
 export type EventObject14 = {
   types?: Types15;
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -460,9 +460,9 @@ export type Types15 = [
  */
 export type EventObject15 = {
   types?: Types16;
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -485,7 +485,7 @@ export type Ref1 = {
    */
   [k: string]: unknown;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -548,9 +548,9 @@ export type Ref2 = {
    * This interface was referenced by `undefined`'s JSON-Schema definition
    * via the `patternProperty` "^(branche|tag|path)s(-ignore)?$".
    */
-  [k: string]: string[];
+  [k: string]: string[] | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * When using the push and pull_request events, you can configure a workflow to run on specific branches or tags. If you only define only tags or only branches, the workflow won't run for events affecting the undefined Git ref.
@@ -581,9 +581,9 @@ export type Path = [string, ...string[]];
  */
 export type EventObject16 = {
   types?: Types18;
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -597,9 +597,9 @@ export type Types18 = ["published" | "updated", ...("published" | "updated")[]];
  */
 export type EventObject17 = {
   types?: Types19;
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -636,9 +636,9 @@ export type EventObject18 = {
    * @minItems 1
    */
   workflows?: [string, ...string[]];
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } | null);
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
@@ -678,10 +678,10 @@ export type PermissionsLevel = "read" | "write" | "none";
 export type Env = {
   args?: string;
   entrypoint?: string;
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & (
   | {
-      [k: string]: string | number | boolean;
+      [k: string]: (string | number | boolean) | undefined;
     }
   | StringContainingExpressionSyntax
 );
@@ -692,7 +692,7 @@ export type Env = {
  */
 export type Matrix =
   | {
-      [k: string]: unknown;
+      [k: string]: unknown | undefined;
     }
   | ExpressionSyntax;
 /**
@@ -700,7 +700,7 @@ export type Matrix =
  */
 export type Env1 =
   | {
-      [k: string]: string | number | boolean;
+      [k: string]: (string | number | boolean) | undefined;
     }
   | StringContainingExpressionSyntax;
 
@@ -723,25 +723,25 @@ export interface GitHubActionsWorkflowConfig {
          * Runs your workflow anytime someone creates a branch or tag, which triggers the create event. For information about the REST API, see https://developer.github.com/v3/git/refs/#create-a-reference.
          */
         create?: {
-          [k: string]: unknown;
+          [k: string]: unknown | undefined;
         } | null;
         /**
          * Runs your workflow anytime someone deletes a branch or tag, which triggers the delete event. For information about the REST API, see https://developer.github.com/v3/git/refs/#delete-a-reference.
          */
         delete?: {
-          [k: string]: unknown;
+          [k: string]: unknown | undefined;
         } | null;
         /**
          * Runs your workflow anytime someone creates a deployment, which triggers the deployment event. Deployments created with a commit SHA may not have a Git ref. For information about the REST API, see https://developer.github.com/v3/repos/deployments/.
          */
         deployment?: {
-          [k: string]: unknown;
+          [k: string]: unknown | undefined;
         } | null;
         /**
          * Runs your workflow anytime a third party provides a deployment status, which triggers the deployment_status event. Deployments created with a commit SHA may not have a Git ref. For information about the REST API, see https://developer.github.com/v3/repos/deployments/#create-a-deployment-status.
          */
         deployment_status?: {
-          [k: string]: unknown;
+          [k: string]: unknown | undefined;
         } | null;
         discussion?: EventObject3;
         discussion_comment?: EventObject4;
@@ -749,13 +749,13 @@ export interface GitHubActionsWorkflowConfig {
          * Runs your workflow anytime when someone forks a repository, which triggers the fork event. For information about the REST API, see https://developer.github.com/v3/repos/forks/#create-a-fork.
          */
         fork?: {
-          [k: string]: unknown;
+          [k: string]: unknown | undefined;
         } | null;
         /**
          * Runs your workflow when someone creates or updates a Wiki page, which triggers the gollum event.
          */
         gollum?: {
-          [k: string]: unknown;
+          [k: string]: unknown | undefined;
         } | null;
         issue_comment?: EventObject5;
         issues?: EventObject6;
@@ -767,7 +767,7 @@ export interface GitHubActionsWorkflowConfig {
          * Runs your workflow anytime someone pushes to a GitHub Pages-enabled branch, which triggers the page_build event. For information about the REST API, see https://developer.github.com/v3/repos/pages/.
          */
         page_build?: {
-          [k: string]: unknown;
+          [k: string]: unknown | undefined;
         } | null;
         project?: EventObject11;
         project_card?: EventObject12;
@@ -776,7 +776,7 @@ export interface GitHubActionsWorkflowConfig {
          * Runs your workflow anytime someone makes a private repository public, which triggers the public event. For information about the REST API, see https://developer.github.com/v3/repos/#edit.
          */
         public?: {
-          [k: string]: unknown;
+          [k: string]: unknown | undefined;
         } | null;
         pull_request?: Ref;
         pull_request_review?: EventObject14;
@@ -789,13 +789,13 @@ export interface GitHubActionsWorkflowConfig {
          * Runs your workflow anytime the status of a Git commit changes, which triggers the status event. For information about the REST API, see https://developer.github.com/v3/repos/statuses/.
          */
         status?: {
-          [k: string]: unknown;
+          [k: string]: unknown | undefined;
         } | null;
         /**
          * Runs your workflow anytime the watch event occurs. More than one activity type triggers this event. For information about the REST API, see https://developer.github.com/v3/activity/starring/.
          */
         watch?: {
-          [k: string]: unknown;
+          [k: string]: unknown | undefined;
         } | null;
         /**
          * Allows workflows to be reused by other workflows.
@@ -855,7 +855,7 @@ export interface GitHubActionsWorkflowConfig {
               required: boolean;
             };
           };
-          [k: string]: unknown;
+          [k: string]: unknown | undefined;
         };
         /**
          * You can now create workflows that are manually triggered with the new workflow_dispatch event. You will then see a 'Run workflow' button on the Actions tab, enabling you to easily trigger a run.
@@ -872,10 +872,10 @@ export interface GitHubActionsWorkflowConfig {
              * via the `patternProperty` "^[_a-zA-Z][a-zA-Z0-9_-]*$".
              */
             [k: string]: {
-              [k: string]: unknown;
+              [k: string]: unknown | undefined;
             };
           };
-          [k: string]: unknown;
+          [k: string]: unknown | undefined;
         };
         workflow_run?: EventObject18;
         /**
@@ -883,7 +883,7 @@ export interface GitHubActionsWorkflowConfig {
          * To trigger the custom repository_dispatch webhook event, you must send a POST request to a GitHub API endpoint and provide an event_type name to describe the activity type. To trigger a workflow run, you must also configure your workflow to use the repository_dispatch event.
          */
         repository_dispatch?: {
-          [k: string]: unknown;
+          [k: string]: unknown | undefined;
         } | null;
         /**
          * You can schedule a workflow to run at specific UTC times using POSIX cron syntax (https://pubs.opengroup.org/onlinepubs/9699919799/utilities/crontab.html#tag_20_25_07). Scheduled workflows run on the latest commit on the default or base branch. The shortest interval you can run scheduled workflows is once every 5 minutes.
@@ -906,7 +906,7 @@ export interface GitHubActionsWorkflowConfig {
    */
   env?:
     | {
-        [k: string]: string | number | boolean;
+        [k: string]: (string | number | boolean) | undefined;
       }
     | StringContainingExpressionSyntax;
   defaults?: Defaults;
@@ -972,7 +972,7 @@ export interface NormalJob {
     | {
         group?: string;
         labels?: string | string[];
-        [k: string]: unknown;
+        [k: string]: unknown | undefined;
       }
     | StringContainingExpressionSyntax
     | ExpressionSyntax;
@@ -984,14 +984,14 @@ export interface NormalJob {
    * A map of outputs for a job. Job outputs are available to all downstream jobs that depend on this job.
    */
   outputs?: {
-    [k: string]: string;
+    [k: string]: string | undefined;
   };
   /**
    * To set custom environment variables, you need to specify the variables in the workflow file. You can define environment variables for a step, job, or entire workflow using the jobs.<job_id>.steps[*].env, jobs.<job_id>.env, and env keywords. For more information, see https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idstepsenv
    */
   env?:
     | {
-        [k: string]: string | number | boolean;
+        [k: string]: (string | number | boolean) | undefined;
       }
     | StringContainingExpressionSyntax;
   defaults?: Defaults1;
@@ -1011,11 +1011,11 @@ export interface NormalJob {
     (
       | {
           uses: string;
-          [k: string]: unknown;
+          [k: string]: unknown | undefined;
         }
       | {
           run: string;
-          [k: string]: unknown;
+          [k: string]: unknown | undefined;
         }
     ) & {
       /**
@@ -1055,7 +1055,7 @@ export interface NormalJob {
        */
       env?:
         | {
-            [k: string]: string | number | boolean;
+            [k: string]: (string | number | boolean) | undefined;
           }
         | StringContainingExpressionSyntax;
       /**
@@ -1070,11 +1070,11 @@ export interface NormalJob {
     ...((
       | {
           uses: string;
-          [k: string]: unknown;
+          [k: string]: unknown | undefined;
         }
       | {
           run: string;
-          [k: string]: unknown;
+          [k: string]: unknown | undefined;
         }
     ) & {
       /**
@@ -1114,7 +1114,7 @@ export interface NormalJob {
        */
       env?:
         | {
-            [k: string]: string | number | boolean;
+            [k: string]: (string | number | boolean) | undefined;
           }
         | StringContainingExpressionSyntax;
       /**
@@ -1218,14 +1218,14 @@ export interface Container {
   credentials?: {
     username?: string;
     password?: string;
-    [k: string]: unknown;
+    [k: string]: unknown | undefined;
   };
   /**
    * Sets an array of environment variables in the container.
    */
   env?:
     | {
-        [k: string]: string | number | boolean;
+        [k: string]: (string | number | boolean) | undefined;
       }
     | StringContainingExpressionSyntax;
   /**
@@ -1271,7 +1271,7 @@ export interface ReusableWorkflowCallJob {
    */
   with?:
     | {
-        [k: string]: string | number | boolean;
+        [k: string]: (string | number | boolean) | undefined;
       }
     | StringContainingExpressionSyntax;
   /**

@@ -1,2 +1,2 @@
-/// <reference types="./github.d.ts" />
-/// <reference types="./circleci.d.ts" />
+export type * from "./github";
+export type * from "./circleci";

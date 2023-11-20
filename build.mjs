@@ -13,13 +13,32 @@ import { compile } from "json-schema-to-typescript";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const resp = await fetch("https://json.schemastore.org/github-workflow.json");
-const schema = await resp.json();
+async function writeSchema(name, url, fname, patchSchema) {
+  const resp = await fetch(url);
+  let schema = await resp.json();
 
-// Update the id, since it is used to generate the base type.
-schema["$id"] = "GitHubActionsWorkflowConfig";
+  // Update the id, since it is used to generate the base type.
+  schema["$id"] = name;
+  schema = patchSchema(schema);
 
-const types = await compile(schema, "GitHubActionsWorkflowConfig", {
-  strictIndexSignatures: true,
-});
-fs.writeFileSync(path.join(__dirname, "index.d.ts"), types);
+  const types = await compile(schema, name, {
+    strictIndexSignatures: true,
+  });
+  fs.writeFileSync(path.join(__dirname, fname), types);
+}
+
+await writeSchema(
+  "GitHubActionsWorkflowConfig",
+  "https://json.schemastore.org/github-workflow.json",
+  "github.d.ts",
+  (sch) => sch,
+);
+await writeSchema(
+  "CircleCIConfig",
+  "https://json.schemastore.org/circleciconfig.json",
+  "circleci.d.ts",
+  (sch) => {
+    sch.definitions.logical.title = "logical";
+    return sch;
+  },
+);

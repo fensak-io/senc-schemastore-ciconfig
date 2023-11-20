@@ -1,5 +1,5 @@
 {
-  "name": "@fensak-io/senc-jsonschema-githubactions",
+  "name": "@fensak-io/senc-schemastore-ciconfig",
   "version": "0.0.5",
   "author": "Fensak, LLC <info@fensak.io> (https://fensak.io)",
   "license": "MPL-2.0",

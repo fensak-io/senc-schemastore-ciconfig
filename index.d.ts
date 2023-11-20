@@ -378,7 +378,6 @@ export type Ref = {
    * This interface was referenced by `undefined`'s JSON-Schema definition
    * via the `patternProperty` "^(branche|tag|path)s(-ignore)?$".
    */
-  // MANUALLY UPDATED
   [k: string]: unknown[] | undefined;
 } & ({
   [k: string]: unknown | undefined;
@@ -484,7 +483,7 @@ export type Ref1 = {
    * This interface was referenced by `undefined`'s JSON-Schema definition
    * via the `patternProperty` "^(branche|tag|path)s(-ignore)?$".
    */
-  [k: string]: unknown;
+  [k: string]: unknown | undefined;
 } & ({
   [k: string]: unknown | undefined;
 } | null);
@@ -549,7 +548,6 @@ export type Ref2 = {
    * This interface was referenced by `undefined`'s JSON-Schema definition
    * via the `patternProperty` "^(branche|tag|path)s(-ignore)?$".
    */
-  // MANUALLY UPDATED
   [k: string]: string[] | undefined;
 } & ({
   [k: string]: unknown | undefined;
@@ -813,28 +811,30 @@ export interface GitHubActionsWorkflowConfig {
              * This interface was referenced by `undefined`'s JSON-Schema definition
              * via the `patternProperty` "^[_a-zA-Z][a-zA-Z0-9_-]*$".
              */
-            [k: string]: {
-              /**
-               * A string description of the input parameter.
-               */
-              description?: string;
-              /**
-               * A string shown to users using the deprecated input.
-               */
-              deprecationMessage?: string;
-              /**
-               * A boolean to indicate whether the action requires the input parameter. Set to true when the parameter is required.
-               */
-              required?: boolean;
-              /**
-               * Required if input is defined for the on.workflow_call keyword. The value of this parameter is a string specifying the data type of the input. This must be one of: boolean, number, or string.
-               */
-              type: "boolean" | "number" | "string";
-              /**
-               * The default value is used when an input parameter isn't specified in a workflow file.
-               */
-              default?: boolean | number | string;
-            };
+            [k: string]:
+              | {
+                  /**
+                   * A string description of the input parameter.
+                   */
+                  description?: string;
+                  /**
+                   * A string shown to users using the deprecated input.
+                   */
+                  deprecationMessage?: string;
+                  /**
+                   * A boolean to indicate whether the action requires the input parameter. Set to true when the parameter is required.
+                   */
+                  required?: boolean;
+                  /**
+                   * Required if input is defined for the on.workflow_call keyword. The value of this parameter is a string specifying the data type of the input. This must be one of: boolean, number, or string.
+                   */
+                  type: "boolean" | "number" | "string";
+                  /**
+                   * The default value is used when an input parameter isn't specified in a workflow file.
+                   */
+                  default?: boolean | number | string;
+                }
+              | undefined;
           };
           /**
            * A map of the secrets that can be used in the called workflow. Within the called workflow, you can use the secrets context to refer to a secret.
@@ -846,16 +846,18 @@ export interface GitHubActionsWorkflowConfig {
              * This interface was referenced by `undefined`'s JSON-Schema definition
              * via the `patternProperty` "^[_a-zA-Z][a-zA-Z0-9_-]*$".
              */
-            [k: string]: {
-              /**
-               * A string description of the secret parameter.
-               */
-              description?: string;
-              /**
-               * A boolean specifying whether the secret must be supplied.
-               */
-              required: boolean;
-            };
+            [k: string]:
+              | {
+                  /**
+                   * A string description of the secret parameter.
+                   */
+                  description?: string;
+                  /**
+                   * A boolean specifying whether the secret must be supplied.
+                   */
+                  required: boolean;
+                }
+              | undefined;
           };
           [k: string]: unknown | undefined;
         };
@@ -873,9 +875,11 @@ export interface GitHubActionsWorkflowConfig {
              * This interface was referenced by `undefined`'s JSON-Schema definition
              * via the `patternProperty` "^[_a-zA-Z][a-zA-Z0-9_-]*$".
              */
-            [k: string]: {
-              [k: string]: unknown | undefined;
-            };
+            [k: string]:
+              | {
+                  [k: string]: unknown | undefined;
+                }
+              | undefined;
           };
           [k: string]: unknown | undefined;
         };
@@ -928,7 +932,7 @@ export interface GitHubActionsWorkflowConfig {
      * This interface was referenced by `undefined`'s JSON-Schema definition
      * via the `patternProperty` "^[_a-zA-Z][a-zA-Z0-9_-]*$".
      */
-    [k: string]: NormalJob | ReusableWorkflowCallJob;
+    [k: string]: (NormalJob | ReusableWorkflowCallJob) | undefined;
   };
   /**
    * The name for workflow runs generated from the workflow. GitHub displays the workflow run name in the list of workflow runs on your repository's 'Actions' tab.

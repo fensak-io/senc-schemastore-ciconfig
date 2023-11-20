@@ -1,6 +1,6 @@
 {
   "name": "@fensak-io/senc-jsonschema-githubactions",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "Fensak, LLC <info@fensak.io> (https://fensak.io)",
   "license": "MPL-2.0",
   "description": "Type definitions for GitHub Actions configuration files derived from jsonschema definition.",
@@ -16,8 +16,13 @@
   },
   "devDependencies": {
     "@semantic-release/git": "^10.0.1",
+    "json-schema-to-typescript": "^13.1.1",
     "prettier": "3.0.3",
-    "semantic-release": "^22.0.5",
-    "json-schema-to-typescript": "^13.1.1"
+    "semantic-release": "^22.0.5"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "json-schema-to-typescript@13.1.1": "patches/json-schema-to-typescript@13.1.1.patch"
+    }
   }
 }

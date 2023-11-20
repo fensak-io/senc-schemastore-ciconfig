@@ -1,0 +1,20 @@
+diff --git a/dist/src/parser.js b/dist/src/parser.js
+index cbb1f628ab6fe312650694791d784bd1e3915353..829313daf150b0e318bbf1d3f8bf372682f10d77 100644
+--- a/dist/src/parser.js
++++ b/dist/src/parser.js
+@@ -334,12 +334,14 @@ function parseSchema(schema, options, processed, usedNames, parentSchemaName) {
+             var ast = parse(value, options, key, processed, usedNames);
+             var comment = "This interface was referenced by `".concat(parentSchemaName, "`'s JSON-Schema definition\nvia the `patternProperty` \"").concat(key, "\".");
+             ast.comment = ast.comment ? "".concat(ast.comment, "\n\n").concat(comment) : comment;
++            // https://github.com/bcherny/json-schema-to-typescript/pull/560
++            ast.keyName = singlePatternProperty ? '[k: string]' : key;
+             return {
+                 ast: ast,
+                 isPatternProperty: !singlePatternProperty,
+                 isRequired: singlePatternProperty || (0, lodash_1.includes)(schema.required || [], key),
+                 isUnreachableDefinition: false,
+-                keyName: singlePatternProperty ? '[k: string]' : key,
++                keyName: ast.keyName,
+             };
+         }));
+     }

@@ -17,14 +17,21 @@ async function writeSchema(name, url, fname, patchSchema) {
   const resp = await fetch(url);
   let schema = await resp.json();
 
-  // Update the id, since it is used to generate the base type.
+  // Update the id and title, since it is used to generate the base type.
   schema["$id"] = name;
+  schema["title"] = name;
   schema = patchSchema(schema);
 
   const types = await compile(schema, name, {
     strictIndexSignatures: true,
   });
   fs.writeFileSync(path.join(__dirname, fname), types);
+}
+
+function patchCircleCISchema(sch) {
+  // Set a title on the `logical` definition to workaround
+  // https://github.com/bcherny/json-schema-to-typescript/issues/482
+  sch.definitions.logical.title = "logical";
 }
 
 await writeSchema(
@@ -37,8 +44,5 @@ await writeSchema(
   "CircleCIConfig",
   "https://json.schemastore.org/circleciconfig.json",
   "circleci.d.ts",
-  (sch) => {
-    sch.definitions.logical.title = "logical";
-    return sch;
-  },
+  patchCircleCISchema,
 );

@@ -479,7 +479,7 @@ export type MachineExecutor =
   | {
       machine?: {
         /**
-         * The VM image to use. View [available images](https://circleci.com/docs/configuration-reference/#available-linux-gpu-images). **Note:** This key is **not** supported on the installable CircleCI. For information about customizing machine executor images on CircleCI installed on your servers, see our [VM Service documentation](https://circleci.com/docs/vm-service).
+         * The VM image to use. View [available images](https://circleci.com/docs/configuration-reference/#available-windows-machine-images-cloud). **Note:** This key is **not** supported on the installable CircleCI. For information about customizing machine executor images on CircleCI installed on your servers, see our [VM Service documentation](https://circleci.com/docs/vm-service).
          */
         image:
           | "windows-server-2022-gui:2023.10.1"
@@ -505,15 +505,19 @@ export type MachineExecutor =
         docker_layer_caching?: DockerLayerCaching & DockerLayerCaching1;
       };
       /**
-       * Amount of CPU and RAM allocated for each job. View [available resource classes](https://circleci.com/docs/configuration-reference/#gpu-execution-environment-linux)
+       * Amount of CPU and RAM allocated for each job. View [available resource classes](https://circleci.com/docs/configuration-reference/#windows-execution-environment)
        */
-      resource_class?: "medium" | "large" | "xlarge" | "2xlarge";
+      resource_class?:
+        | "windows.medium"
+        | "windows.large"
+        | "windows.xlarge"
+        | "windows.2xlarge";
       [k: string]: unknown | undefined;
     }
   | {
       machine?: {
         /**
-         * The VM image to use. View [available images](https://circleci.com/docs/configuration-reference/#available-linux-gpu-images). **Note:** This key is **not** supported on the installable CircleCI. For information about customizing machine executor images on CircleCI installed on your servers, see our [VM Service documentation](https://circleci.com/docs/vm-service).
+         * The VM image to use. View [available images](https://circleci.com/docs/configuration-reference/#available-windows-gpu-image). **Note:** This key is **not** supported on the installable CircleCI. For information about customizing machine executor images on CircleCI installed on your servers, see our [VM Service documentation](https://circleci.com/docs/vm-service).
          */
         image:
           | "windows-server-2019-cuda:current"
@@ -521,7 +525,7 @@ export type MachineExecutor =
         docker_layer_caching?: DockerLayerCaching & DockerLayerCaching1;
       };
       /**
-       * Amount of CPU and RAM allocated for each job. View [available resource classes](https://circleci.com/docs/configuration-reference/#gpu-execution-environment-linux)
+       * Amount of CPU and RAM allocated for each job. View [available resource classes](https://circleci.com/docs/configuration-reference/#gpu-execution-environment-windows)
        */
       resource_class?: "windows.gpu.nvidia.medium";
       [k: string]: unknown | undefined;
@@ -604,7 +608,7 @@ export type Logical3 =
       };
     };
 
-export interface JSONSchemaForCircleCIConfigurationFiles {
+export interface CircleCIConfig {
   /**
    * The version field is intended to be used in order to issue warnings for deprecation or breaking changes.
    */
@@ -842,6 +846,7 @@ export interface MacosExecutor {
      * The version of Xcode that is installed on the virtual machine, see the [Supported Xcode Versions section of the Testing iOS](https://circleci.com/docs/testing-ios#supported-xcode-versions) document for the complete list.
      */
     xcode:
+      | "15.1.0"
       | "15.0.0"
       | "14.3.1"
       | "14.2.0"

@@ -32,6 +32,7 @@ function patchCircleCISchema(sch) {
   // Set a title on the `logical` definition to workaround
   // https://github.com/bcherny/json-schema-to-typescript/issues/482
   sch.definitions.logical.title = "logical";
+  return sch;
 }
 
 await writeSchema(

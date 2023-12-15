@@ -1,6 +1,6 @@
 {
   "name": "@fensak-io/senc-schemastore-ciconfig",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "author": "Fensak, LLC <info@fensak.io> (https://fensak.io)",
   "license": "MPL-2.0",
   "description": "Type definitions for GitHub Actions configuration files derived from jsonschema definition.",

@@ -16,13 +16,8 @@
   },
   "devDependencies": {
     "@semantic-release/git": "^10.0.1",
-    "json-schema-to-typescript": "^13.1.1",
+    "json-schema-to-typescript": "^16.0.0",
     "prettier": "3.0.3",
     "semantic-release": "^22.0.5"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "json-schema-to-typescript@13.1.1": "patches/json-schema-to-typescript@13.1.1.patch"
-    }
   }
 }
